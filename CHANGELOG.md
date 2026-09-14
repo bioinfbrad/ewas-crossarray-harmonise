@@ -9,6 +9,12 @@ whose changelog carries the numerical history.
 
 ### Added
 
+- `serve.sh` boots a local Galaxy with all three tools loaded (`DEPS=conda`
+  resolves requirements so jobs run; `PORT=` moves it off 9090), and `test.sh`
+  runs the tool tests. `test.sh` probes for a bindable local port first and
+  falls back to `tests/run_galaxy_tool_tests.py` where planemo's Galaxy cannot
+  start, printing what that fallback does not cover.
+
 - Published to the Test Tool Shed as three repositories owned by
   `kkamieniecka` — `ewas_harmonise` (`fbb7663c2818`), `ewas_dmr_ml`
   (`24ca6c21e06a`) and `ewas_blocks_hsmm` (`63349e961d40`), each revision 0,

@@ -82,6 +82,8 @@ scripts/05_blocks_hsmm.R
 scripts/ewasml.R              numerical core sourced by 04 and 05
 test-data/                    synthetic fixtures for the tool tests
 tests/run_galaxy_tool_tests.py  serverless fallback runner
+serve.sh                      boot a local Galaxy with the three tools
+test.sh                       run the tool tests, real harness or fallback
 sync-from-pipeline.sh         refresh this repo from an upstream checkout
 ```
 
@@ -89,6 +91,37 @@ The only difference from upstream is the path the wrappers use to reach the
 drivers: upstream they sit in the pipeline's `bin/`, here they sit in
 `scripts/` inside the tool directory, so nothing is referenced outside the
 published repository. `sync-from-pipeline.sh` applies that rewrite.
+
+## Running it locally
+
+Two scripts wrap the flag lists:
+
+```sh
+./serve.sh                  # local Galaxy on 127.0.0.1:9090 with all three tools
+DEPS=conda ./serve.sh       # ... with requirements resolved, so jobs run
+PORT=9191 ./serve.sh
+
+./test.sh                   # the tool tests
+RUNNER=serverless ./test.sh # skip Galaxy, render and execute the commands only
+```
+
+`serve.sh` defaults to `--no_dependency_resolution`: the forms, parameter tree
+and conditional logic are all live, but submitted jobs fail for want of R
+packages. `DEPS=conda` fixes that at the cost of a long first run. The script
+prints the `test-data/` fixtures to upload, which are the same inputs the tool
+tests use.
+
+`test.sh` probes whether a local port can be bound before choosing a runner.
+Where it can, it runs `planemo test` and writes `planemo_report.html` /
+`.json`. Where it cannot — some sandboxes refuse every bind, loopback and
+ephemeral included, and planemo's Galaxy then never starts — it falls back to
+the serverless runner and says so on stderr. That fallback is the weaker
+check: it renders and executes each test's command and verifies the declared
+content assertions, but nothing downstream of the job — no datatype sniffing,
+no metadata setting, no format declarations. A wrapper defect of exactly that
+kind (a `csv` output declaration over a gzipped file) once passed the runner
+and failed the real harness, so treat a green fallback as provisional until CI
+agrees.
 
 ## Tests
 
