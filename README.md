@@ -107,9 +107,14 @@ RUNNER=serverless ./test.sh # skip Galaxy, render and execute the commands only
 
 `serve.sh` defaults to `--no_dependency_resolution`: the forms, parameter tree
 and conditional logic are all live, but submitted jobs fail for want of R
-packages. `DEPS=conda` fixes that at the cost of a long first run. The script
-prints the `test-data/` fixtures to upload, which are the same inputs the tool
-tests use.
+packages. `DEPS=conda` fixes that at the cost of a long first run, and
+`R_LIBS_USER=… DEPS=hostR` runs jobs against an R library already on the
+machine — which is how `ewas_harmonise` runs on Apple silicon, where bioconda
+has no `osx-arm64` `bioconductor-*` builds. The script prints the `test-data/`
+fixtures to upload, which are the same inputs the tool tests use.
+
+`docs/local-galaxy.md` is the step-by-step version, including installing from
+the Test Tool Shed into a real Galaxy and the Docker route.
 
 `test.sh` probes whether a local port can be bound before choosing a runner.
 Where it can, it runs `planemo test` and writes `planemo_report.html` /

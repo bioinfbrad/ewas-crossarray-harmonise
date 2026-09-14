@@ -9,6 +9,15 @@ whose changelog carries the numerical history.
 
 ### Added
 
+- `docs/local-galaxy.md`: step-by-step routes to a local Galaxy carrying these
+  tools - planemo serve, a release checkout with the tools installed from the
+  Test Tool Shed, and the amd64 Docker image. Records that bioconda has no
+  `osx-arm64` `bioconductor-*` builds, so `ewas_harmonise` cannot resolve
+  through conda on Apple silicon.
+- `DEPS=hostR` in `serve.sh` runs jobs against an existing R library
+  (`R_LIBS_USER`) instead of resolving requirements, and warns which of
+  minfi, limma, Matrix, optparse and jsonlite are missing from it.
+
 - `serve.sh` boots a local Galaxy with all three tools loaded (`DEPS=conda`
   resolves requirements so jobs run; `PORT=` moves it off 9090), and `test.sh`
   runs the tool tests. `test.sh` probes for a bindable local port first and
