@@ -1,5 +1,5 @@
 name: ewas_crossarray_harmonise
-owner: bioinfbrad
+owner: kkamieniecka
 description: >-
   Cross-array harmonisation and design-aware region and block detection for
   longitudinal EWAS combining Illumina 450K and MethylationEPIC data.

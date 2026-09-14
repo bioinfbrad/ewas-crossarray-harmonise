@@ -9,6 +9,15 @@ whose changelog carries the numerical history.
 
 ### Added
 
+- Published to the Test Tool Shed as three repositories owned by
+  `kkamieniecka` — `ewas_harmonise` (`fbb7663c2818`), `ewas_dmr_ml`
+  (`24ca6c21e06a`) and `ewas_blocks_hsmm` (`63349e961d40`), each revision 0,
+  tool version 0.1.0. The shed parsed all three as valid tools with no invalid
+  tools, which confirms `macros.xml` resolves in each per-tool repository:
+  `@TOOL_VERSION@` expanded and the macro's requirement set came back in the
+  install info. `owner:` is the shed account, which is not the GitHub account
+  this repository sits under.
+
 - Initial extraction of the Galaxy tool suite from upstream commit
   `e4c54cf334b995599bb6a21320ac99f85bc72dc7`: `ewas_harmonise`,
   `ewas_dmr_ml` and `ewas_blocks_hsmm` (tool version 0.1.0, profile 23.0),

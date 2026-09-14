@@ -31,19 +31,36 @@ whole subjects.
 
 ## Install
 
-Into a Galaxy instance from the Tool Shed once published:
+The suite is published on the **[Test Tool Shed](https://testtoolshed.g2.bx.psu.edu)**
+under owner `kkamieniecka`, as one repository per tool — `ewas_harmonise`,
+`ewas_dmr_ml`, `ewas_blocks_hsmm` — each at revision 0, tool version 0.1.0.
+Install from a Galaxy admin panel with the Test Tool Shed configured, or
+search the shed for `ewas_`. The main Tool Shed carries nothing yet.
+
+To publish a new revision from a checkout:
 
 ```sh
-planemo shed_init --from_workdir      # already done; .shed.yml is committed
-planemo shed_lint --tools
-planemo shed_update --shed_target toolshed
+export SHED_KEY=...                   # shed User -> Preferences -> Manage API Key
+planemo shed_lint --tools --skip version_bumped --fail_level error .
+planemo shed_update --shed_target testtoolshed --shed_key_from_env SHED_KEY \
+    -m "what changed" .
 ```
 
-`owner:` in `.shed.yml` must match your Tool Shed username before the first
-`shed_update`. `shed_lint` and `shed_update` both query the Tool Shed for the
-repositories named in `.shed.yml`, so they only succeed once the suite is
-registered and an API key is configured; they are pre-publication steps run by
-hand, not part of CI.
+Notes from the first upload:
+
+- `owner:` in `.shed.yml` must be the shed account that owns the API key, not
+  the GitHub account — they need not be the same name.
+- `planemo shed_lint` queries the shed to decide whether the version needs a
+  bump, and always the *main* shed regardless of `--shed_target`; `--skip
+  version_bumped` keeps it offline. Lint at `--fail_level error` so the
+  `TestsMissing` warning on `ewas_harmonise` does not stop it.
+- `shed_lint` and `shed_update` need the shed reachable and a key, so they are
+  hand-run publication steps, not part of CI.
+- `planemo shed_diff` fetches the shed-side archive over hgweb, which the Test
+  Tool Shed does not serve to anonymous clients; where that is blocked, verify
+  a revision through the API instead — `/api/repositories?owner=…` then
+  `/api/repositories/{id}/metadata` shows the parsed tools and any invalid
+  ones.
 
 Or by hand: copy this directory into your Galaxy `tools/` tree and add the
 three XML files to a section in `tool_conf.xml`. Requirements resolve through
