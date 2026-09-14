@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: >-
+  If you use these Galaxy tools, please cite the EWASGalaxy suite they extend
+  and this repository.
+title: "EWAS cross-array harmonisation: Galaxy tool suite"
+abstract: >-
+  Galaxy wrappers for cross-array harmonisation of Illumina 450K and
+  MethylationEPIC data and for design-aware region and block detection in
+  longitudinal EWAS, extending the EWASGalaxy tool suite.
+type: software
+license: MIT
+repository-code: https://github.com/bioinfbrad/ewas-crossarray-harmonise
+authors:
+  - family-names: Kamieniecka
+    given-names: Katarzyna
+    # affiliation and orcid intentionally left unset rather than guessed;
+    # add them before the first tagged release
+references:
+  - type: article
+    title: "EWASGalaxy: a tools suite for population epigenetics integrated into Galaxy"
+    doi: 10.1101/553784
+    year: 2019
+    authors:
+      - family-names: Murat
+        given-names: Kamila
+      - family-names: Grüning
+        given-names: Björn
+      - family-names: Poterlowicz
+        given-names: Pawel W.
+      - family-names: Westgate
+        given-names: Gillian
+      - family-names: Tobin
+        given-names: Desmond J.
+      - family-names: Poterlowicz
+        given-names: Krzysztof

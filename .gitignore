@@ -1,0 +1,7 @@
+planemo_report.*
+planemo.log
+.planemo*
+__pycache__/
+*.pyc
+.tmp/
+.DS_Store

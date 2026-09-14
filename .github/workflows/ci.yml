@@ -1,0 +1,69 @@
+name: tools
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  planemo:
+    name: planemo lint and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-name: gxtools
+          init-shell: bash
+          # bioconductor-limma is on bioconda; without the channels declared
+          # here the solve fails
+          condarc: |
+            channels:
+              - conda-forge
+              - bioconda
+          create-args: >-
+            python=3.11
+            r-base=4.4
+            bioconductor-limma
+            r-matrix
+            r-optparse
+            r-jsonlite
+      - name: install planemo
+        shell: bash -el {0}
+        run: pip install planemo
+      - name: lint
+        shell: bash -el {0}
+        # fail_level error, not the default warn: ewas_harmonise carries no
+        # <tests> (it reads IDATs), and that warning should stay visible
+        # without failing the build
+        run: planemo lint --fail_level error ewas_*.xml
+      # planemo shed_lint is deliberately not run here: it queries the Tool
+      # Shed for the repositories named in .shed.yml, so it fails until the
+      # suite is registered there. It is a pre-publication step, run by hand.
+      - name: test the wrappers that carry tests
+        shell: bash -el {0}
+        # --no_dependency_resolution: the requirements are already installed in
+        # this environment, and letting Galaxy resolve them per job would pull
+        # the Bioconductor stack a second time
+        run: |
+          set +e
+          planemo test --no_dependency_resolution \
+            --test_output planemo_report.html \
+            --test_output_json planemo_report.json \
+            ewas_dmr_ml.xml ewas_blocks_hsmm.xml 2>&1 | tee planemo.log
+          code=${PIPESTATUS[0]}
+          # the raw step log is download-only, which is awkward on review, so
+          # the tail also goes out as a check annotation
+          if [ "$code" -ne 0 ]; then
+            echo "::error title=planemo test failed::$(tail -c 3000 planemo.log \
+              | sed 's/%/%25/g; s/\r//g' | awk '{printf "%s%%0A", $0}')"
+          fi
+          exit $code
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: planemo-report
+          path: |
+            planemo_report.*
+            planemo.log
