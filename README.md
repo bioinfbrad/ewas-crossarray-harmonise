@@ -79,7 +79,8 @@ ewas_blocks_hsmm.xml
 scripts/01_harmonise.R        the drivers the wrappers call
 scripts/04_dmr_ml.R
 scripts/05_blocks_hsmm.R
-scripts/ewasml.R              numerical core sourced by 04 and 05
+scripts/ewasml.R              numerical core: used when the crossarrayEWAS
+                              package is not installed, which here is always
 test-data/                    synthetic fixtures for the tool tests
 tests/run_galaxy_tool_tests.py  serverless fallback runner
 serve.sh                      boot a local Galaxy with the three tools
@@ -91,6 +92,19 @@ The only difference from upstream is the path the wrappers use to reach the
 drivers: upstream they sit in the pipeline's `bin/`, here they sit in
 `scripts/` inside the tool directory, so nothing is referenced outside the
 published repository. `sync-from-pipeline.sh` applies that rewrite.
+
+### Why the core is vendored
+
+Upstream now also ships the estimators as an R package, `crossarrayEWAS`, and
+the two ML drivers load it when it is installed — `scripts/ewasml.R` is their
+fallback. The wrappers do not require the package, because it is not yet in
+any conda channel and a requirement that resolves nowhere would break
+dependency resolution for everyone running these tools. So the fallback is
+what runs here, and the core stays vendored. When the package is published,
+two edits retire it: add
+`<requirement type="package">r-crossarrayewas</requirement>` to
+`requirements_r_ml` in `macros.xml`, and drop `ewasml.R` from the copy list in
+`sync-from-pipeline.sh`. The drivers need no change.
 
 ## Running it locally
 

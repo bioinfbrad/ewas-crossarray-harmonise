@@ -7,13 +7,31 @@ whose changelog carries the numerical history.
 
 ## [Unreleased]
 
+### Changed
+
+- Synced from upstream `3c5dbab`. `requirements_r_ml` (`ewas_dmr_ml`,
+  `ewas_blocks_hsmm`) moves from R 4.4 with `bioconductor-limma` 3.62.0 to R
+  4.5 with 3.66.0, with Matrix, optparse and jsonlite pinned to match. That
+  set was solved and installed on `osx-arm64`, so those two tools resolve
+  through conda on Apple silicon; 3.62.0 has no build there.
+- The drivers `04_dmr_ml.R` and `05_blocks_hsmm.R` load the upstream
+  `crossarrayEWAS` R package when it is installed and fall back to
+  `scripts/ewasml.R` when it is not, recording which in the stage's run
+  record. Here it is always the fallback: the wrappers deliberately do not
+  require the package while it is unpublished, since a requirement that
+  resolves in no channel breaks dependency resolution. README records the two
+  edits that retire the vendored core once it is published.
+- `docs/local-galaxy.md`: the Apple-silicon note is now specific.
+  `bioconductor-minfi` is `noarch` and not itself the obstacle — it needs
+  `bioconductor-illuminaio`, which has no `osx-arm64` build at any version,
+  and that is where the solve fails.
+
 ### Added
 
 - `docs/local-galaxy.md`: step-by-step routes to a local Galaxy carrying these
   tools - planemo serve, a release checkout with the tools installed from the
-  Test Tool Shed, and the amd64 Docker image. Records that bioconda has no
-  `osx-arm64` `bioconductor-*` builds, so `ewas_harmonise` cannot resolve
-  through conda on Apple silicon.
+  Test Tool Shed, and the amd64 Docker image. Records why `ewas_harmonise`
+  cannot resolve through conda on Apple silicon.
 - `DEPS=hostR` in `serve.sh` runs jobs against an existing R library
   (`R_LIBS_USER`) instead of resolving requirements, and warns which of
   minfi, limma, Matrix, optparse and jsonlite are missing from it.

@@ -46,10 +46,16 @@ resolves on Apple silicon. Written against planemo 0.75.47.
    ```
 
    On Apple silicon `DEPS=conda` resolves `ewas_dmr_ml` and
-   `ewas_blocks_hsmm` (limma, Matrix, optparse, jsonlite) but **not**
-   `ewas_harmonise`: bioconda publishes no `osx-arm64` builds of
-   `bioconductor-*`, so minfi and the Illumina annotation packages have no
-   candidate. `DEPS=hostR` is the way around it — point it at a library where
+   `ewas_blocks_hsmm` but **not** `ewas_harmonise`. Both halves of that are
+   now measured rather than assumed. The first: the pin set those two tools
+   ask for — R 4.5, `bioconductor-limma` 3.66.0, Matrix, optparse, jsonlite —
+   solves and installs on `osx-arm64` here, which is why the macro pins that
+   exact set and not the R 4.4 pairing it used to (limma 3.62.0 has no
+   `osx-arm64` build). The second: `bioconductor-minfi` is `noarch`, so it is
+   not itself the obstacle — it requires `bioconductor-illuminaio`, which has
+   no `osx-arm64` build at any version, and the solve fails there. One arm64
+   build of that recipe, with whatever it cascades into, is what would unblock
+   the tool. `DEPS=hostR` is the way around it — point it at a library where
    you installed minfi yourself (`BiocManager::install`, which builds from
    source for arm64) and Galaxy inherits that environment. The script checks
    the library for minfi, limma, Matrix, optparse and jsonlite and names
