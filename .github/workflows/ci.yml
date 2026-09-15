@@ -22,10 +22,14 @@ jobs:
             channels:
               - conda-forge
               - bioconda
+          # Kept equal to requirements_r_ml in macros.xml, so the tests run in
+          # the environment the wrappers actually ask for. planemo runs with
+          # --no_dependency_resolution below, which means nothing else checks
+          # that this pin set solves.
           create-args: >-
             python=3.11
-            r-base=4.4
-            bioconductor-limma
+            r-base=4.5
+            bioconductor-limma=3.66.0
             r-matrix
             r-optparse
             r-jsonlite
